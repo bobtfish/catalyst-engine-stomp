@@ -1,0 +1,12 @@
+Changes
+Makefile.PL
+MANIFEST
+README
+t/Catalyst-Engine-Stomp.t
+lib/Catalyst/Engine/Stomp.pm
+lib/Catalyst/Controller/MessageDriven.pm
+testapp/lib/TestApp/Controller/TestController.pm
+testapp/lib/TestApp/testapp.yml
+testapp/lib/TestApp.pm
+testapp/script/testapp_stomp.pl
+
