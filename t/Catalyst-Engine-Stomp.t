@@ -1,5 +1,4 @@
-use Test::More tests => 14;
-use Test::Fork;
+use Test::More tests => 12;
 
 # Tests which expect a STOMP server like ActiveMQ to exist on
 # localhost:61613, which is what you get if you just get the ActiveMQ
@@ -10,10 +9,10 @@ use YAML::XS qw/ Dump Load /;
 use Data::Dumper;
 
 # First fire off the server
-my $child_pid = fork_ok(1, sub {
-  ok(system("$^X -Ilib -Itestapp/lib testapp/script/testapp_stomp.pl --oneshot"));
-  #sleep 3;
-});
+unless (fork()) {
+	system("$^X -Ilib -Itestapp/lib testapp/script/testapp_stomp.pl --oneshot");
+	exit 0;
+}
 
 # Now be a client to that server
 
