@@ -1,16 +1,11 @@
 Catalyst-Engine-Stomp version 0.01
 ==================================
 
-The README is used to introduce the module and provide instructions on
-how to install the module, any machine dependencies it may have (for
-example C compilers and installed libraries) and any other information
-that should be provided before the module is installed.
+This is a Catalyst engine which allows you to build a message-driven
+application with STOMP. 
 
-A README file is required for CPAN modules since CPAN extracts the
-README file from a module distribution so that people browsing the
-archive can use it get an idea of the modules uses. It is usually a
-good idea to provide version information here so that people can
-decide whether fixes for the module are worth downloading.
+Controllers indicate queues, and message types indicate actions. A
+controller base class is provided to handle YAML-serialized messages.
 
 INSTALLATION
 
@@ -25,13 +20,13 @@ DEPENDENCIES
 
 This module requires these other modules and libraries:
 
-  blah blah blah
+     Net::Stomp
+     YAML::XS
+     Catalyst::Runtime 5.80003
 
 COPYRIGHT AND LICENCE
 
-Put the correct copyright and licence information here.
-
-Copyright (C) 2008 by Chris Andrews
+Copyright (C) 2009 Venda Ltd
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself, either Perl version 5.8.8 or,
