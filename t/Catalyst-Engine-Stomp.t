@@ -1,4 +1,4 @@
-use Test::More tests => 12;
+use Test::More;
 
 # Tests which expect a STOMP server like ActiveMQ to exist on
 # localhost:61613, which is what you get if you just get the ActiveMQ
@@ -8,15 +8,28 @@ use Net::Stomp;
 use YAML::XS qw/ Dump Load /;
 use Data::Dumper;
 
+my $stomp;
+eval {
+    $stomp = Net::Stomp->new( { hostname => 'localhost', port => 61613 } );
+};
+if ($@) {
+    plan 'skip_all' => 'No ActiveMQ server listening on 61613: ' . $@;
+    exit;
+}
+else {
+    plan tests => 12;
+}
+
 # First fire off the server
+$SIG{CHLD} = 'IGNORE';
 unless (fork()) {
 	system("$^X -Ilib -Itestapp/lib testapp/script/testapp_stomp.pl --oneshot");
 	exit 0;
 }
+sleep 30;
 
 # Now be a client to that server
 
-my $stomp = Net::Stomp->new( { hostname => 'localhost', port => 61613 } );
 ok($stomp, 'Net::Stomp object');
 
 my $frame = $stomp->connect();
