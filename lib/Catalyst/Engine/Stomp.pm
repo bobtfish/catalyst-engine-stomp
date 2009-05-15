@@ -156,8 +156,6 @@ sub handle_stomp_frame {
 	my ($self, $app, $frame) = @_;
 
 	my $command = $frame->command();
-	$app->log->debug("Got STOMP command: $command");
-	
 	if ($command eq 'MESSAGE') {
 		$self->handle_stomp_message($app, $frame);
 	}
@@ -195,7 +193,6 @@ sub handle_stomp_message {
 
 	# reply
 	my $reply_queue = '/remote-temp-queue/' . ($response->headers->header('X-Reply-Address'));
-	$app->log->debug("replying to $reply_queue\n");
 	$self->connection->send({ destination => $reply_queue, body => $response->content });
 
 	# ack the message off the queue now we've replied
