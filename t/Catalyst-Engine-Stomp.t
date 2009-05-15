@@ -23,13 +23,14 @@ else {
 # First fire off the server
 $SIG{CHLD} = 'IGNORE';
 unless (fork()) {
-	system("$^X -Ilib -Itestapp/lib testapp/script/testapp_stomp.pl --oneshot");
+	system("CATALYST_DEBUG=0 $^X -Ilib -Itestapp/lib testapp/script/testapp_stomp.pl --oneshot");
 	exit 0;
 }
-sleep 30;
+print STDERR "server started, waiting for spinup...";
+sleep 10;
 
 # Now be a client to that server
-
+print STDERR "testing\n";
 ok($stomp, 'Net::Stomp object');
 
 my $frame = $stomp->connect();
