@@ -5,7 +5,7 @@ name     'Catalyst-Engine-Stomp';
 all_from 'lib/Catalyst/Engine/Stomp.pm';
   
 requires 'Catalyst::Engine::Embeddable'  => '0.0.1';
-requires 'Catalyst::Action::Deserialize' => undef;
+requires 'Catalyst::Action::REST' => undef;
 requires 'Catalyst::Runtime'  => '5.80003';
 requires 'Moose' => undef;
 requires 'MooseX::Workers' => '0.05';
