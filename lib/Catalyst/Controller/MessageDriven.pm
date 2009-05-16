@@ -3,6 +3,31 @@ use Moose;
 
 BEGIN { extends 'Catalyst::Controller' }
 
+=head1 NAME
+
+Catalyst::Controller::MessageDriven
+
+=head1 SYNOPSIS
+
+  package MyApp::Controller::Queue;
+  use Moose;
+  BEGIN { extends 'Catalyst::Controller::MessageDriven' }
+
+  sub some_action : Local { 
+      my ($self, $c) = @_;
+      # Reply with a minimal response message
+      my $response = { type => 'testaction_response' };
+      $c->stash->{response} = $response;
+  }
+
+=head1 DESCRIPTION
+
+A Catalyst controller base class for use with Catalyst::Engine::Stomp,
+which handles YAML-serialized messages. A top-level "type" key in the
+YAML determines the action dispatched to. 
+
+=cut
+
 __PACKAGE__->config(
 		    'default'   => 'text/x-yaml',
 		    'stash_key' => 'response',

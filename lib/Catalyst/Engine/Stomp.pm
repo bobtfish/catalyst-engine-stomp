@@ -32,29 +32,24 @@ Catalyst::Engine::Stomp - write message handling apps with Catalyst.
   MyApp->run();
 
   # In a controller, or controller base class:
+  use base qw/ Catalyst::Controller::MessageDriven /;
 
-  use YAML;
+  # then create actions, which map as message types
+  sub testaction : Local {
+      my ($self, $c) = @_;
 
-  # configure YAML deserialization; requires Catalyst::Action::REST
+      # Reply with a minimal response message
+      my $response = { type => 'testaction_response' };
+      $c->stash->{response} = $response;
+  }
+
+  # The default serialization is YAML, but this configuration 
+  # may be overridden in your controller:
   __PACKAGE__->config(
 	  	    'default'   => 'text/x-yaml',
 		    'stash_key' => 'rest',
 		    'map'       => { 'text/x-yaml' => 'YAML' },
 		   );
-
-  sub begin :ActionClass('Deserialize') { }
-
-  # have a default action, which forwards to the correct action
-  # based on the message contents (the type).
-  sub default : Private {
-	  my ($self, $c) = @_;
-
-	  my $action = $c->req->data->{type};
-	  $c->forward($action);
-  }  
-
-  # Send messages back:
-  $c->engine->send_message($queue, Dump($msg));
 
 =head1 DESCRIPTION
 
@@ -64,6 +59,11 @@ need a controller that understands messaging, as well as this engine.
 This is single-threaded and single process - you need to run multiple
 instances of this engine to get concurrency, and configure your broker
 to load-balance across multiple consumers of the same queue.
+
+Controllers are mapped to Stomp queues, and a controller base class is
+provided, Catalyst::Controller::MessageDriven, which implements
+YAML-serialized messages, mapping a top-level YAML "type" key to 
+the action. 
 
 =head1 METHODS
 
@@ -133,7 +133,8 @@ sub prepare_request {
 
 =head2 finalize_headers
 
-Overridden to dump out any errors encountered.
+Overridden to dump out any errors encountered, since you won't get a
+"debugging" message as for HTTP.
 
 =cut
 
@@ -148,7 +149,7 @@ sub finalize_headers {
 
 =head2 handle_stomp_frame
 
-Dispatch according to STOMP frame type.
+Dispatch according to Stomp frame type.
 
 =cut
 
@@ -163,13 +164,13 @@ sub handle_stomp_frame {
 		$self->handle_stomp_error($app, $frame);
 	}
 	else {
-		$app->log->debug("Got unknown STOMP command: $command");
+		$app->log->debug("Got unknown Stomp command: $command");
 	}
 }
 
 =head2 handle_stomp_message
 
-Dispatch a STOMP message into the Catalyst app.
+Dispatch a Stomp message into the Catalyst app.
 
 =cut
 
@@ -201,7 +202,7 @@ sub handle_stomp_message {
 
 =head2 handle_stomp_error
 
-Log any STOMP error frames we receive.
+Log any Stomp error frames we receive.
 
 =cut
 
@@ -209,8 +210,10 @@ sub handle_stomp_error {
 	my ($self, $app, $frame) = @_;
 	
 	my $error = $frame->headers->{message};
-	$app->log->debug("Got STOMP error: $error");
+	$app->log->debug("Got Stomp error: $error");
 }
+
+__PACKAGE__->meta->make_immutable;
 
 1;
 
