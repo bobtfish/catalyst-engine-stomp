@@ -1,4 +1,4 @@
-package TestApp;
+package StompTestApp;
 use Moose;
 use Catalyst::Runtime '5.80002';
 
@@ -10,7 +10,7 @@ extends 'Catalyst';
 
 our $VERSION = '0.01';
 
-__PACKAGE__->config( name => 'TestApp' );
+__PACKAGE__->config( name => 'StompTestApp' );
 __PACKAGE__->setup();
 __PACKAGE__->meta->make_immutable;
 

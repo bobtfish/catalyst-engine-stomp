@@ -18,8 +18,8 @@ META.yml
 README
 t/00_use.t
 t/Catalyst-Engine-Stomp.t
-testapp/lib/TestApp.pm
-testapp/lib/TestApp/Controller/TestController.pm
-testapp/lib/TestApp/testapp.yml
-testapp/script/testapp_stomp.pl
-testapp/script/testapp_stomp_workers.pl
+testapp/lib/StompTestApp.pm
+testapp/lib/StompTestApp/Controller/TestController.pm
+testapp/lib/StompTestApp/stomptestapp.yml
+testapp/script/stomptestapp_stomp.pl
+testapp/script/stomptestapp_stomp_workers.pl

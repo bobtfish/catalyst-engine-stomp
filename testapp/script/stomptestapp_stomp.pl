@@ -34,8 +34,8 @@ if ( $oneshot ) {
 
 # This is require instead of use so that the above environment
 # variables can be set at runtime.
-require TestApp;
-TestApp->run();
+require StompTestApp;
+StompTestApp->run();
 
 1;
 

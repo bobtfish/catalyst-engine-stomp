@@ -1,5 +1,5 @@
 ---
-name: TestApp
+name: StompTestApp
 'Engine::Stomp':
   hostname: localhost
   port: 61613

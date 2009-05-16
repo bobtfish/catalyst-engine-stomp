@@ -1,6 +1,8 @@
 use inc::Module::Install;
 use 5.008006;
   
+license  'perl';
+
 name     'Catalyst-Engine-Stomp';
 all_from 'lib/Catalyst/Engine/Stomp.pm';
   
@@ -12,6 +14,8 @@ requires 'MooseX::Workers' => '0.05';
 requires 'Net::Stomp' => '0.34';  
 requires 'YAML::XS' => '0.32';
 requires 'namespace::autoclean' => '0.05';
+
+no_index package => 'StompTestApp';
 
 auto_install;
 WriteAll;

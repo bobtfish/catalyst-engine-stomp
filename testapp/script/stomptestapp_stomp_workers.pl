@@ -14,8 +14,8 @@ sub run {
 	my $self = shift;
 	for my $i (1..4) {
 		$self->spawn( sub { 
-				      require TestApp;
-				      TestApp->run();
+				      require StompTestApp;
+				      StompTestApp->run();
 			      } );
 	}
         POE::Kernel->run();
@@ -33,8 +33,8 @@ sub worker_done    {
 	my $self = shift;
 	warn "restarting";
 	$self->spawn( sub { 
-			      require TestApp;
-			      TestApp->run();
+			      require StompTestApp;
+			      StompTestApp->run();
 		      } );
 }
 sub worker_started { shift; warn join ' ', @_; }

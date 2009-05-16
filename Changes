@@ -2,3 +2,6 @@ Revision history for Perl extension Catalyst::Engine::Stomp.
 
 0.01  Fri May 15 21:39:30 2009
 	Initial CPAN Release
+
+0.02  Sun May 17 00:00:00 2009
+	Rename TestApp 

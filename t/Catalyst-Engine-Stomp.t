@@ -23,7 +23,7 @@ else {
 # First fire off the server
 $SIG{CHLD} = 'IGNORE';
 unless (fork()) {
-	system("CATALYST_DEBUG=0 $^X -Ilib -Itestapp/lib testapp/script/testapp_stomp.pl --oneshot");
+	system("CATALYST_DEBUG=0 $^X -Ilib -Itestapp/lib testapp/script/stomptestapp_stomp.pl --oneshot");
 	exit 0;
 }
 print STDERR "server started, waiting for spinup...";

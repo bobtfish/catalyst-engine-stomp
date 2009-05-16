@@ -1,4 +1,4 @@
-package TestApp::Controller::TestController;
+package StompTestApp::Controller::TestController;
 use Moose;
 
 BEGIN { extends 'Catalyst::Controller::MessageDriven' };
