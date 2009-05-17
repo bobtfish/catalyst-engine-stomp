@@ -3,7 +3,7 @@ package # Hide from PAUSE
 use Moose;
 use Catalyst::Runtime '5.80003';
 
-use Catalyst qw/-Debug
+use Catalyst qw/
                 ConfigLoader
 	       /;
 use namespace::autoclean;

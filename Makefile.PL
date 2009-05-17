@@ -15,6 +15,8 @@ requires 'Net::Stomp' => '0.34';
 requires 'YAML::XS' => '0.32';
 requires 'namespace::autoclean' => '0.05';
 
+test_requires 'Alien::ApacheMQ' => '0.00001';
+
 no_index package => 'StompTestApp';
 no_index package => 'StompTestApp::Controller::TestController';
 

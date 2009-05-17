@@ -8,6 +8,15 @@ use Net::Stomp;
 use YAML::XS qw/ Dump Load /;
 use Data::Dumper;
 
+use Alien::ActiveMQ;
+my $ACTIVEMQ_VERSION = '5.2.0';
+
+unless (Alien::ActiveMQ->is_version_installed($ACTIVEMQ_VERSION)) {
+    plan 'skip_all' => 'No ActiveMQ server installed by Alien::ActiveMQ, try running the "install-activemq" command'; 
+    exit;
+}
+my $mq = Alien::ActiveMQ->run_server($ACTIVEMQ_VERSION);
+
 my $stomp;
 eval {
     $stomp = Net::Stomp->new( { hostname => 'localhost', port => 61613 } );
@@ -23,11 +32,11 @@ else {
 # First fire off the server
 $SIG{CHLD} = 'IGNORE';
 unless (fork()) {
-	system("CATALYST_DEBUG=0 $^X -Ilib -Itestapp/lib testapp/script/stomptestapp_stomp.pl --oneshot");
+	system("$^X -Ilib -Itestapp/lib testapp/script/stomptestapp_stomp.pl --oneshot");
 	exit 0;
 }
 print STDERR "server started, waiting for spinup...";
-sleep 10;
+sleep 20;
 
 # Now be a client to that server
 print STDERR "testing\n";
