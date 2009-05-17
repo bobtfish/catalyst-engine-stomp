@@ -16,6 +16,7 @@ requires 'YAML::XS' => '0.32';
 requires 'namespace::autoclean' => '0.05';
 
 no_index package => 'StompTestApp';
+no_index package => 'StompTestApp::Controller::TestController';
 
 auto_install;
 WriteAll;
