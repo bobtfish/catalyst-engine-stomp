@@ -1,5 +1,7 @@
-package StompTestApp::Controller::TestController;
+package # Hide from PAUSE
+  StompTestApp::Controller::TestController;
 use Moose;
+use namespace::autoclean;
 
 BEGIN { extends 'Catalyst::Controller::MessageDriven' };
 
