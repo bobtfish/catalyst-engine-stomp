@@ -11,23 +11,29 @@ use Data::Dumper;
 use Alien::ActiveMQ;
 my $ACTIVEMQ_VERSION = '5.2.0';
 
-unless (Alien::ActiveMQ->is_version_installed($ACTIVEMQ_VERSION)) {
-    plan 'skip_all' => 'No ActiveMQ server installed by Alien::ActiveMQ, try running the "install-activemq" command'; 
-    exit;
-}
-my $mq = Alien::ActiveMQ->run_server($ACTIVEMQ_VERSION);
-
-my $stomp;
+my ($stomp, $mq);
 eval {
     $stomp = Net::Stomp->new( { hostname => 'localhost', port => 61613 } );
 };
 if ($@) {
-    plan 'skip_all' => 'No ActiveMQ server listening on 61613: ' . $@;
-    exit;
+
+    unless (Alien::ActiveMQ->is_version_installed($ACTIVEMQ_VERSION)) {
+        plan 'skip_all' => 'No ActiveMQ server installed by Alien::ActiveMQ, try running the "install-activemq" command'; 
+        exit;
+    }
+
+    $mq = Alien::ActiveMQ->run_server($ACTIVEMQ_VERSION);
+
+    eval {
+        $stomp = Net::Stomp->new( { hostname => 'localhost', port => 61613 } );
+    };
+    if ($@) {
+        plan 'skip_all' => 'No ActiveMQ server listening on 61613: ' . $@;
+        exit;
+    }
 }
-else {
-    plan tests => 12;
-}
+
+plan tests => 12;
 
 # First fire off the server
 $SIG{CHLD} = 'IGNORE';
