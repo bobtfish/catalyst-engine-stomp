@@ -2,7 +2,7 @@ package Catalyst::Engine::Stomp;
 use Moose;
 extends 'Catalyst::Engine::Embeddable';
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 use List::MoreUtils qw/ uniq /;
 use HTTP::Request;
