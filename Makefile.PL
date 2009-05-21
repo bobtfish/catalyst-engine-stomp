@@ -8,7 +8,7 @@ all_from 'lib/Catalyst/Engine/Stomp.pm';
   
 requires 'Catalyst::Engine::Embeddable'  => '0.0.1';
 requires 'Catalyst::Action::REST' => undef;
-requires 'Catalyst::Runtime'  => '5.80003';
+requires 'Catalyst::Runtime'  => '5.80004';
 requires 'Moose' => undef;
 requires 'MooseX::Workers' => '0.05';
 requires 'Net::Stomp' => '0.34';  
