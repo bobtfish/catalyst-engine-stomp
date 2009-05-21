@@ -1,5 +1,5 @@
-Catalyst-Engine-Stomp version 0.01
-==================================
+Catalyst-Engine-Stomp
+=====================
 
 This is a Catalyst engine which allows you to build a message-driven
 application with STOMP. 
