@@ -62,4 +62,25 @@ sub default : Private {
 
 __PACKAGE__->meta->make_immutable;
 
-1;
+=head1 METHODS
+
+=head2 default
+
+Forwards the request to the appropriate action based on the 'type' field
+within the message data.
+
+=head2 begin
+
+Uses L<Catalyst::Action::Deserialize> to unserialize the message.
+
+=head2 end
+
+Serializes the data stashed by the dispatched action, and
+arranges for the reply to be sent to the endpoint nominated in
+the request's 'reply_to' field.
+
+Supplies custom exception handling which returns
+throw exceptions as a serialized return message.
+
+=cut
+
