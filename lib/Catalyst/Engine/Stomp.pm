@@ -46,10 +46,10 @@ Catalyst::Engine::Stomp - write message handling apps with Catalyst.
   # The default serialization is YAML, but this configuration
   # may be overridden in your controller:
   __PACKAGE__->config(
-      	    'default'   => 'text/x-yaml',
-    	    'stash_key' => 'rest',
-    	    'map'       => { 'text/x-yaml' => 'YAML' },
-    	   );
+              'default'   => 'text/x-yaml',
+            'stash_key' => 'rest',
+            'map'       => { 'text/x-yaml' => 'YAML' },
+           );
 
 =head1 DESCRIPTION
 
@@ -101,18 +101,18 @@ sub run {
 
     # subscribe, with client ack.
         foreach my $queue (@queues) {
-    	my $queue_name = "/queue/$queue";
-    	$self->connection->subscribe({
-    				      destination => $queue_name,
-    				      ack         => 'client',
-    				     });
+        my $queue_name = "/queue/$queue";
+        $self->connection->subscribe({
+                          destination => $queue_name,
+                          ack         => 'client',
+                         });
         }
 
     # enter loop...
     while (1) {
-    	my $frame = $self->connection->receive_frame();
-    	$self->handle_stomp_frame($app, $frame);
-    	last if $ENV{ENGINE_ONESHOT};
+        my $frame = $self->connection->receive_frame();
+        $self->handle_stomp_frame($app, $frame);
+        last if $ENV{ENGINE_ONESHOT};
     }
     exit 0;
 }
@@ -142,7 +142,7 @@ sub finalize_headers {
     my ($self, $c) = @_;
     my $error = join "\n", @{$c->error};
     if ($error) {
-    	$c->log->debug($error);
+        $c->log->debug($error);
     }
     return $self->next::method($c);
 }
@@ -158,13 +158,13 @@ sub handle_stomp_frame {
 
     my $command = $frame->command();
     if ($command eq 'MESSAGE') {
-    	$self->handle_stomp_message($app, $frame);
+        $self->handle_stomp_message($app, $frame);
     }
     elsif ($command eq 'ERROR') {
-    	$self->handle_stomp_error($app, $frame);
+        $self->handle_stomp_error($app, $frame);
     }
     else {
-    	$app->log->debug("Got unknown Stomp command: $command");
+        $app->log->debug("Got unknown Stomp command: $command");
     }
 }
 
