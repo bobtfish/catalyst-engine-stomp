@@ -1,6 +1,6 @@
 package Catalyst::Controller::MessageDriven;
 use Moose;
-use YAML::XS qw/ LoadFile Dump /;
+use Data::Serializer;
 
 BEGIN { extends 'Catalyst::Controller' }
 
@@ -32,15 +32,19 @@ YAML determines the action dispatched to.
 
 =cut
 
+__PACKAGE__->config( serializer => 'YAML' );
+
 sub begin : Private { 
 	my ($self, $c) = @_;
 	
 	# Deserialize the request message
-	
         my $message;
+	my $serializer = $self->config->{serializer};
+	my $s = Data::Serializer->new( serializer => $serializer );
 	eval {
 		my $body = $c->request->body;
-		$message = LoadFile( "$body" );
+		open my $IN, "$body" or die "can't open temp file $body";
+		$message = $s->raw_deserialize(do { local $/; <$IN> });
 	};
 	if ($@) {
 		# can't reply - reply_to is embedded in the message
@@ -67,8 +71,10 @@ sub end : Private {
 
 	# Serialize the response
 	my $output;
+	my $serializer = $self->config->{serializer};
+	my $s = Data::Serializer->new( serializer => $serializer );
 	eval {
-		$output = Dump( $c->stash->{response} );
+		$output = $s->raw_serialize( $c->stash->{response} );
 	};
 	if ($@) {
  		my $error = "exception in serialize: $@";

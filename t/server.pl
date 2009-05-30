@@ -22,12 +22,11 @@ if ($@) {
     }
 }
 
-# First fire off the server
 $SIG{CHLD} = 'IGNORE';
 unless (fork()) {
 	system("$^X -Ilib -Itestapp/lib testapp/script/stomptestapp_stomp.pl --oneshot");
 	exit 0;
 }
 print STDERR "server started, waiting for spinup...";
-sleep 2;
+sleep 20;
 
