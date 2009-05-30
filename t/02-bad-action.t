@@ -8,45 +8,11 @@ use Net::Stomp;
 use YAML::XS qw/ Dump Load /;
 use Data::Dumper;
 
-use Alien::ActiveMQ;
-my $ACTIVEMQ_VERSION = '5.2.0';
-
-my ($stomp, $mq);
-eval {
-    $stomp = Net::Stomp->new( { hostname => 'localhost', port => 61613 } );
-};
-if ($@) {
-
-    unless (Alien::ActiveMQ->is_version_installed($ACTIVEMQ_VERSION)) {
-        plan 'skip_all' => 'No ActiveMQ server installed by Alien::ActiveMQ, try running the "install-activemq" command'; 
-        exit;
-    }
-
-    $mq = Alien::ActiveMQ->run_server($ACTIVEMQ_VERSION);
-
-    eval {
-        $stomp = Net::Stomp->new( { hostname => 'localhost', port => 61613 } );
-    };
-    if ($@) {
-        plan 'skip_all' => 'No ActiveMQ server listening on 61613: ' . $@;
-        exit;
-    }
-}
+use FindBin;
+use lib "$FindBin::Bin";
+require 'server.pl';
 
 plan tests => 12;
-
-# First fire off the server
-$SIG{CHLD} = 'IGNORE';
-unless (fork()) {
-	system("$^X -Ilib -Itestapp/lib testapp/script/stomptestapp_stomp.pl --oneshot");
-	exit 0;
-}
-print STDERR "server started, waiting for spinup...";
-sleep 20;
-
-# Now be a client to that server
-print STDERR "testing\n";
-ok($stomp, 'Net::Stomp object');
 
 my $frame = $stomp->connect();
 ok($frame, 'connect to MQ server ok');
@@ -57,13 +23,14 @@ ok(length $reply_to > 2, 'valid-looking reply_to queue');
 
 ok($stomp->subscribe( { destination => '/temp-queue/reply' } ), 'subscribe to temp queue');
 
+# Test what happens when the action crashes
 my $message = {
 	       payload => { foo => 1, bar => 2 },
 	       reply_to => $reply_to,
-	       type => 'testaction',
+	       type => 'badaction',
 	      };
 my $text = Dump($message);
-ok($text, 'compose message');
+ok($text, 'compose message for badaction');
 
 $stomp->send( { destination => '/queue/testcontroller', body => $text } );
 
@@ -74,7 +41,8 @@ ok($reply_frame->body, 'has a body');
 
 my $response = Load($reply_frame->body);
 ok($response, 'YAML response ok');
-ok($response->{type} eq 'testaction_response', 'correct type');
+ok($response->{status} eq 'ERROR', 'is an error');
+ok($response->{error} =~ /oh noes/);
 
 ok($stomp->disconnect, 'disconnected');
 

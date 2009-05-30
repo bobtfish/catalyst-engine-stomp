@@ -1,5 +1,6 @@
 package Catalyst::Controller::MessageDriven;
 use Moose;
+use YAML::XS qw/ LoadFile Dump /;
 
 BEGIN { extends 'Catalyst::Controller' }
 
@@ -14,7 +15,10 @@ Catalyst::Controller::MessageDriven
   BEGIN { extends 'Catalyst::Controller::MessageDriven' }
 
   sub some_action : Local { 
-      my ($self, $c) = @_;
+      my ($self, $c, $message) = @_;
+
+      # Handle message 
+
       # Reply with a minimal response message
       my $response = { type => 'testaction_response' };
       $c->stash->{response} = $response;
@@ -28,19 +32,30 @@ YAML determines the action dispatched to.
 
 =cut
 
-__PACKAGE__->config(
-		    'default'   => 'text/x-yaml',
-		    'stash_key' => 'response',
-		    'map'       => { 'text/x-yaml' => 'YAML' },
-		   );
+sub begin : Private { 
+	my ($self, $c) = @_;
+	
+	# Deserialize the request message
+	
+        my $message;
+	eval {
+		my $body = $c->request->body;
+		$message = LoadFile( "$body" );
+	};
+	if ($@) {
+		# can't reply - reply_to is embedded in the message
+		$c->error("exception in deserialize: $@");
+	}
+	else {
+		$c->stash->{request} = $message;
+	}
+}
 
-sub begin :ActionClass('Deserialize') { }
-
-sub end :ActionClass('Serialize') {
+sub end : Private {
 	my ($self, $c) = @_;
 
 	# Engine will send our reply based on the value of this header.
-	$c->response->headers->header( 'X-Reply-Address' => $c->req->data->{reply_to} );
+	$c->response->headers->header( 'X-Reply-Address' => $c->stash->{request}->{reply_to} );
 
 	# Custom error handler - steal errors from catalyst and dump them into
 	# the stash, to get them serialized out as the reply.
@@ -49,15 +64,29 @@ sub end :ActionClass('Serialize') {
  		$c->stash->{response} = { status => 'ERROR', error => $error };
 		$c->error(0); # clear errors, so our response isn't clobbered
  	}
+
+	# Serialize the response
+	my $output;
+	eval {
+		$output = Dump( $c->stash->{response} );
+	};
+	if ($@) {
+ 		my $error = "exception in serialize: $@";
+		$c->error($error);
+ 		$c->stash->{response} = { status => 'ERROR', error => $error };
+ 		$output = Dump( $c->stash->{response} );
+	}
+
+	$c->response->output( $output );
 }
 
 sub default : Private {
 	my ($self, $c) = @_;
-	
+
 	# Forward the request to the appropriate action, based on the
 	# message type.
-	my $action = $c->req->data->{type};
-	$c->forward($action, [$c->req->data]);
+	my $action = $c->stash->{request}->{type};
+	$c->forward($action, [$c->stash->{request}]);
 }
 
 __PACKAGE__->meta->make_immutable;

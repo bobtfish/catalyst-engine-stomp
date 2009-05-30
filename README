@@ -25,7 +25,6 @@ This module requires these other modules and libraries:
      YAML::XS
      Catalyst::Engine::Embeddable
      Catalyst::Runtime 5.80003
-     Catalyst::Action::REST
      namespace::autoclean
      
 The supplied workers script requires MooseX::Workers.
