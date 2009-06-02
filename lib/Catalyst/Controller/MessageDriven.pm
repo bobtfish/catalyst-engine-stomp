@@ -60,19 +60,24 @@ sub end : Private {
 
 	# Engine will send our reply based on the value of this header.
 	$c->response->headers->header( 'X-Reply-Address' => $c->stash->{request}->{reply_to} );
+	
+	# The wire response
+	my $output;
+	
+	# Load a serializer
+	my $serializer = $self->config->{serializer};
+	my $s = Data::Serializer->new( serializer => $serializer );
 
 	# Custom error handler - steal errors from catalyst and dump them into
 	# the stash, to get them serialized out as the reply.
  	if (scalar @{$c->error}) {
  		my $error = join "\n", @{$c->error};
  		$c->stash->{response} = { status => 'ERROR', error => $error };
+		$output = $s->serialize( $c->stash->{response} );
 		$c->error(0); # clear errors, so our response isn't clobbered
  	}
 
 	# Serialize the response
-	my $output;
-	my $serializer = $self->config->{serializer};
-	my $s = Data::Serializer->new( serializer => $serializer );
 	eval {
 		$output = $s->raw_serialize( $c->stash->{response} );
 	};
@@ -80,7 +85,7 @@ sub end : Private {
  		my $error = "exception in serialize: $@";
 		$c->error($error);
  		$c->stash->{response} = { status => 'ERROR', error => $error };
- 		$output = Dump( $c->stash->{response} );
+ 		$output = $s->serialize( $c->stash->{response} );
 	}
 
 	$c->response->output( $output );
