@@ -74,7 +74,8 @@ sub end : Private {
  		my $error = join "\n", @{$c->error};
  		$c->stash->{response} = { status => 'ERROR', error => $error };
 		$output = $s->serialize( $c->stash->{response} );
-		$c->error(0); # clear errors, so our response isn't clobbered
+		$c->clear_errors;
+		$c->response->status(400);
  	}
 
 	# Serialize the response
@@ -83,9 +84,9 @@ sub end : Private {
 	};
 	if ($@) {
  		my $error = "exception in serialize: $@";
-		$c->error($error);
  		$c->stash->{response} = { status => 'ERROR', error => $error };
  		$output = $s->serialize( $c->stash->{response} );
+		$c->response->status(400);
 	}
 
 	$c->response->output( $output );
@@ -97,7 +98,12 @@ sub default : Private {
 	# Forward the request to the appropriate action, based on the
 	# message type.
 	my $action = $c->stash->{request}->{type};
-	$c->forward($action, [$c->stash->{request}]);
+	if (defined $action) {
+		$c->forward($action, [$c->stash->{request}]);
+	}
+	else {
+ 		$c->error('no message type specified');
+	}
 }
 
 __PACKAGE__->meta->make_immutable;
