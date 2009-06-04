@@ -18,4 +18,13 @@ sub badaction : Local {
     die "oh noes";
 }
 
+sub ping : Local {
+    my ($self, $c, $request) = @_;
+    if ($request->{type} eq 'ping') {
+	    $c->stash->{response} = { status => 'PONG' };
+	    return;
+    }
+    die "not a ping request?";
+}
+
 1;
