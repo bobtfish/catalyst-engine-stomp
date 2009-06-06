@@ -4,7 +4,7 @@ use Sub::Exporter;
 use HTTP::Request;
 
 BEGIN {
-	$ENV{CATALYST_ENGINE} = 'Test::MessageDriven';
+    $ENV{CATALYST_ENGINE} = 'Test::MessageDriven';
 };
 
 =head1 NAME
@@ -41,63 +41,64 @@ Some test wrappers - successful / error message conditions?
 =cut
 
 my $build_exports = sub {
-	my ($self, $meth, $args, $defaults) = @_;
+    my ($self, $meth, $args, $defaults) = @_;
 
-	my $request;
-	my $class = $args->{class};
+    my $request;
+    my $class = $args->{class};
 
-	if (!$class) {
-		$request = sub { Catalyst::Exception->throw("Must specify a test app: use Catalyst::Test::MessageDriven 'TestApp'") };
-	}
-	else {
-		unless (Class::MOP::is_class_loaded($class)) {
-			Class::MOP::load_class($class);
-		}
-		$class->import;
+    if (!$class) {
+        $request = sub { Catalyst::Exception->throw("Must specify a test app: use Catalyst::Test::MessageDriven 'TestApp'") };
+    }
+    else {
+        unless (Class::MOP::is_class_loaded($class)) {
+            Class::MOP::load_class($class);
+        }
+        $class->import;
 
-		my $app = $class->run();
-		$request = sub { message_driven_request( $app, @_ ) };
-	}
+        my $app = $class->run();
+        $request = sub { message_driven_request( $app, @_ ) };
+    }
 
-	return {
-		request => $request,
-	};
+    return {
+        request => $request,
+    };
 };
 
 {
-	my $import = Sub::Exporter::build_exporter({
-		groups => [ all => $build_exports ],
-		into_level => 1,
-	});
+    my $import = Sub::Exporter::build_exporter({
+        groups => [ all => $build_exports ],
+        into_level => 1,
+    });
 
-	sub import {
-		my ($self, $class) = @_;
-		$import->($self, '-all' => { class => $class });
-		return 1;
-	}
+    sub import {
+        my ($self, $class) = @_;
+        $import->($self, '-all' => { class => $class });
+        return 1;
+    }
 }
 
 sub message_driven_request {
-	my ($app, $path, $req_message) = @_;
-	my $url = "message://localhost:61613/$path";
+    my ($app, $path, $req_message) = @_;
+    my $url = "message://localhost:61613/$path";
 
-	my $request = HTTP::Request->new( POST => $url );
-	$request->content($req_message);
-	$request->content_length(length $req_message);
-	$request->content_type('application/octet-stream');
+    my $request = HTTP::Request->new( POST => $url );
+    $request->content($req_message);
+    $request->content_length(length $req_message);
+    $request->content_type('application/octet-stream');
 
-	my $response;
-	$app->handle_request($request, \$response);
+    my $response;
+    $app->handle_request($request, \$response);
 
-	return $response;
+    return $response;
 }
 
-package Catalyst::Engine::Test::MessageDriven;
+package # Hide from PAUSE
+    Catalyst::Engine::Test::MessageDriven;
 use base 'Catalyst::Engine::Embeddable';
 
 sub run {
-	my ($self, $app) = @_;
-	return $app;
+    my ($self, $app) = @_;
+    return $app;
 }
 
 1;
