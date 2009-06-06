@@ -11,3 +11,4 @@ all_pod_coverage_ok(
     also_private => [qw/BUILD BUILDARGS/]
   }
 );
+

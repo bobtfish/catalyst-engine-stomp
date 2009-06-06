@@ -7,7 +7,7 @@ eval {
 if ($@) {
 
     unless (Alien::ActiveMQ->is_version_installed($ACTIVEMQ_VERSION)) {
-        plan 'skip_all' => 'No ActiveMQ server installed by Alien::ActiveMQ, try running the "install-activemq" command'; 
+        plan 'skip_all' => 'No ActiveMQ server installed by Alien::ActiveMQ, try running the "install-activemq" command';
         exit;
     }
 

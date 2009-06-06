@@ -18,3 +18,4 @@ else {
 
 Test::NoTabs->import;
 all_perl_files_ok(qw/lib/);
+
