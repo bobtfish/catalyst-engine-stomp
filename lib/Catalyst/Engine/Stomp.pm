@@ -22,7 +22,7 @@ Catalyst::Engine::Stomp - write message handling apps with Catalyst.
   BEGIN {
     $ENV{CATALYST_ENGINE} = 'Stomp';
     require Catalyst::Engine::Stomp;
-  }  
+  }
 
   MyApp->config->{Engine::Stomp} =
    {
@@ -46,7 +46,7 @@ Catalyst::Engine::Stomp - write message handling apps with Catalyst.
 =head1 DESCRIPTION
 
 Write a Catalyst app connected to a Stomp messagebroker, not HTTP. You
-need a controller that understands messaging, as well as this engine. 
+need a controller that understands messaging, as well as this engine.
 
 This is single-threaded and single process - you need to run multiple
 instances of this engine to get concurrency, and configure your broker
@@ -54,8 +54,8 @@ to load-balance across multiple consumers of the same queue.
 
 Controllers are mapped to Stomp queues, and a controller base class is
 provided, Catalyst::Controller::MessageDriven, which implements
-YAML-serialized messages, mapping a top-level YAML "type" key to 
-the action. 
+YAML-serialized messages, mapping a top-level YAML "type" key to
+the action.
 
 =head1 METHODS
 
@@ -95,8 +95,8 @@ sub run {
         foreach my $queue (@queues) {
                 my $queue_name = "/queue/$queue";
                 $self->connection->subscribe({
-                                              destination => $queue_name, 
-                                              ack         => 'client' 
+                                              destination => $queue_name,
+                                              ack         => 'client'
                                              });
         }
 
@@ -202,7 +202,7 @@ Log any Stomp error frames we receive.
 
 sub handle_stomp_error {
         my ($self, $app, $frame) = @_;
-        
+
         my $error = $frame->headers->{message};
         $app->log->debug("Got Stomp error: $error");
 }
