@@ -1,6 +1,7 @@
 package Catalyst::Controller::MessageDriven;
 use Moose;
 use Data::Serializer;
+use namespace::autoclean;
 
 BEGIN { extends 'Catalyst::Controller' }
 
