@@ -17,9 +17,13 @@ MANIFEST			This list of files
 META.yml
 README
 t/00_use.t
-t/Catalyst-Engine-Stomp.t
+t/01-good-message.t
+t/02-bad-action.t
+t/03-json-message.t
+t/server.pl
 testapp/lib/StompTestApp.pm
 testapp/lib/StompTestApp/Controller/TestController.pm
+testapp/lib/StompTestApp/Controller/TestJsonController.pm
 testapp/lib/StompTestApp/stomptestapp.yml
 testapp/script/stomptestapp_stomp.pl
 testapp/script/stomptestapp_stomp_workers.pl

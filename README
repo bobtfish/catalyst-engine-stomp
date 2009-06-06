@@ -23,12 +23,14 @@ This module requires these other modules and libraries:
      Moose
      Net::Stomp
      YAML::XS
+     Data::Serializer
      Catalyst::Engine::Embeddable
      Catalyst::Runtime 5.80003
-     Catalyst::Action::REST
      namespace::autoclean
      
-The supplied workers script requires MooseX::Workers.
+The supplied workers script requires MooseX::Workers, and you'll need
+the relevant modules to support Data::Serializer if you choose
+something other than YAML as a message format. 
 
 COPYRIGHT AND LICENCE
 

@@ -1,5 +1,6 @@
 package Catalyst::Controller::MessageDriven;
 use Moose;
+use Data::Serializer;
 
 BEGIN { extends 'Catalyst::Controller' }
 
@@ -13,8 +14,11 @@ Catalyst::Controller::MessageDriven
   use Moose;
   BEGIN { extends 'Catalyst::Controller::MessageDriven' }
 
-  sub some_action : Local {
-      my ($self, $c) = @_;
+  sub some_action : Local { 
+      my ($self, $c, $message) = @_;
+
+      # Handle message 
+
       # Reply with a minimal response message
       my $response = { type => 'testaction_response' };
       $c->stash->{response} = $response;
@@ -24,63 +28,84 @@ Catalyst::Controller::MessageDriven
 
 A Catalyst controller base class for use with Catalyst::Engine::Stomp,
 which handles YAML-serialized messages. A top-level "type" key in the
-YAML determines the action dispatched to.
+YAML determines the action dispatched to. 
 
 =cut
 
-__PACKAGE__->config(
-            'default'   => 'text/x-yaml',
-            'stash_key' => 'response',
-            'map'       => { 'text/x-yaml' => 'YAML' },
-           );
+__PACKAGE__->config( serializer => 'YAML' );
 
-sub begin :ActionClass('Deserialize') { }
+sub begin : Private { 
+	my ($self, $c) = @_;
+	
+	# Deserialize the request message
+        my $message;
+	my $serializer = $self->config->{serializer};
+	my $s = Data::Serializer->new( serializer => $serializer );
+	eval {
+		my $body = $c->request->body;
+		open my $IN, "$body" or die "can't open temp file $body";
+		$message = $s->raw_deserialize(do { local $/; <$IN> });
+	};
+	if ($@) {
+		# can't reply - reply_to is embedded in the message
+		$c->error("exception in deserialize: $@");
+	}
+	else {
+		$c->stash->{request} = $message;
+	}
+}
 
-sub end :ActionClass('Serialize') {
-    my ($self, $c) = @_;
+sub end : Private {
+	my ($self, $c) = @_;
 
-    # Engine will send our reply based on the value of this header.
-    $c->response->headers->header( 'X-Reply-Address' => $c->req->data->{reply_to} );
+	# Engine will send our reply based on the value of this header.
+	$c->response->headers->header( 'X-Reply-Address' => $c->stash->{request}->{reply_to} );
+	
+	# The wire response
+	my $output;
+	
+	# Load a serializer
+	my $serializer = $self->config->{serializer};
+	my $s = Data::Serializer->new( serializer => $serializer );
 
-    # Custom error handler - steal errors from catalyst and dump them into
-    # the stash, to get them serialized out as the reply.
-     if (scalar @{$c->error}) {
-         my $error = join "\n", @{$c->error};
-         $c->stash->{response} = { status => 'ERROR', error => $error };
-         $c->error(0); # clear errors, so our response isn't clobbered
-     }
+	# Custom error handler - steal errors from catalyst and dump them into
+	# the stash, to get them serialized out as the reply.
+ 	if (scalar @{$c->error}) {
+ 		my $error = join "\n", @{$c->error};
+ 		$c->stash->{response} = { status => 'ERROR', error => $error };
+		$output = $s->serialize( $c->stash->{response} );
+		$c->clear_errors;
+		$c->response->status(400);
+ 	}
+
+	# Serialize the response
+	eval {
+		$output = $s->raw_serialize( $c->stash->{response} );
+	};
+	if ($@) {
+ 		my $error = "exception in serialize: $@";
+ 		$c->stash->{response} = { status => 'ERROR', error => $error };
+ 		$output = $s->serialize( $c->stash->{response} );
+		$c->response->status(400);
+	}
+
+	$c->response->output( $output );
 }
 
 sub default : Private {
-    my ($self, $c) = @_;
+	my ($self, $c) = @_;
 
-    # Forward the request to the appropriate action, based on the
-    # message type.
-    my $action = $c->req->data->{type};
-    $c->forward($action, [$c->req->data]);
+	# Forward the request to the appropriate action, based on the
+	# message type.
+	my $action = $c->stash->{request}->{type};
+	if (defined $action) {
+		$c->forward($action, [$c->stash->{request}]);
+	}
+	else {
+ 		$c->error('no message type specified');
+	}
 }
 
 __PACKAGE__->meta->make_immutable;
 
-=head1 METHODS
-
-=head2 default
-
-Forwards the request to the appropriate action based on the 'type' field
-within the message data.
-
-=head2 begin
-
-Uses L<Catalyst::Action::Deserialize> to unserialize the message.
-
-=head2 end
-
-Serializes the data stashed by the dispatched action, and
-arranges for the reply to be sent to the endpoint nominated in
-the request's 'reply_to' field.
-
-Supplies custom exception handling which returns
-throw exceptions as a serialized return message.
-
-=cut
-
+1;
