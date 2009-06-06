@@ -1,12 +1,13 @@
 use strict;
 use warnings;
-use Test::More tests => 6;
+use Test::More tests => 5;
 
 use FindBin;
 use lib "$FindBin::Bin/../testapp/lib";
 
-BEGIN { use_ok 'Catalyst::Test::MessageDriven' or die;
-    use_ok 'StompTestApp' or die; };
+BEGIN {
+    use_ok 'Catalyst::Test::MessageDriven', 'StompTestApp' or die;
+};
 
 # successful request - type is minimum attributes
 my $req = "---\ntype: ping\n";

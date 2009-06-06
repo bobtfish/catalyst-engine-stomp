@@ -1,16 +1,19 @@
+use strict;
+use warnings;
 use Test::More;
 
 # Tests which expect a STOMP server like ActiveMQ to exist on
 # localhost:61613, which is what you get if you just get the ActiveMQ
 # distro and run its out-of-the-box config.
 
-use Net::Stomp;
 use YAML::XS qw/ Dump Load /;
 use Data::Dumper;
 
 use FindBin;
-use lib "$FindBin::Bin";
-require 'server.pl';
+use lib "$FindBin::Bin/lib";
+use TestServer;
+
+my $stomp = start_server();
 
 plan tests => 12;
 

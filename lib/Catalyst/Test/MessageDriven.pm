@@ -16,7 +16,7 @@ Catalyst::Test::MessageDriven - test message-driven Catalyst apps
 Derived from Catalyst::Test, this module provides a way to run tests
 against message-driven Catalyst applications - those with
 Catalyst::Controller::MessageDriven-based controllers, and expect to
-run with Catalyst::Engine::Stomp. 
+run with Catalyst::Engine::Stomp.
 
 =head1 SYNOPSIS
 
@@ -32,7 +32,7 @@ run with Catalyst::Engine::Stomp.
 =head2 request(queue, message)
 
 This function accepts a queue and a message, and runs the request in
-that context. Returns a response object. 
+that context. Returns a response object.
 
 =head1 TODO
 
@@ -58,7 +58,7 @@ my $build_exports = sub {
 		my $app = $class->run();
 		$request = sub { message_driven_request( $app, @_ ) };
 	}
-	
+
 	return {
 		request => $request,
 	};
@@ -85,7 +85,7 @@ sub message_driven_request {
 	$request->content($req_message);
 	$request->content_length(length $req_message);
 	$request->content_type('application/octet-stream');
-    
+
 	my $response;
 	$app->handle_request($request, \$response);
 
@@ -101,3 +101,4 @@ sub run {
 }
 
 1;
+

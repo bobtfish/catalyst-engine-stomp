@@ -1,3 +1,5 @@
+use strict;
+use warnings;
 use Test::More;
 
 # Tests which expect a STOMP server like ActiveMQ to exist on
@@ -9,8 +11,10 @@ use YAML::XS qw/ Dump Load /;
 use Data::Dumper;
 
 use FindBin;
-use lib "$FindBin::Bin";
-require 'server.pl';
+use lib "$FindBin::Bin/lib";
+use TestServer;
+
+my $stomp = start_server();
 
 plan tests => 11;
 
