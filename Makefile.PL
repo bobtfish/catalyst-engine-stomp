@@ -17,10 +17,6 @@ requires 'namespace::autoclean' => '0.05';
 
 test_requires 'Alien::ActiveMQ' => '0.00003';
 
-no_index package => 'StompTestApp';
-no_index package => 'StompTestApp::Controller::TestController';
-no_index package => 'StompTestApp::Controller::TestJsonController';
-
 my @force_build_requires_if_author = qw(
   Test::NoTabs
   Test::Pod
