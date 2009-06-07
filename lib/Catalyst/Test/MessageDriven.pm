@@ -40,6 +40,21 @@ Some test wrappers - successful / error message conditions?
 
 =cut
 
+my $message_driven_request = sub {
+    my ($app, $path, $req_message) = @_;
+    my $url = "message://localhost:61613/$path";
+
+    my $request = HTTP::Request->new( POST => $url );
+    $request->content($req_message);
+    $request->content_length(length $req_message);
+    $request->content_type('application/octet-stream');
+
+    my $response;
+    $app->handle_request($request, \$response);
+
+    return $response;
+};
+
 my $build_exports = sub {
     my ($self, $meth, $args, $defaults) = @_;
 
@@ -56,7 +71,7 @@ my $build_exports = sub {
         $class->import;
 
         my $app = $class->run();
-        $request = sub { message_driven_request( $app, @_ ) };
+        $request = sub { $message_driven_request->( $app, @_ ) };
     }
 
     return {
@@ -75,21 +90,6 @@ my $build_exports = sub {
         $import->($self, '-all' => { class => $class });
         return 1;
     }
-}
-
-sub message_driven_request {
-    my ($app, $path, $req_message) = @_;
-    my $url = "message://localhost:61613/$path";
-
-    my $request = HTTP::Request->new( POST => $url );
-    $request->content($req_message);
-    $request->content_length(length $req_message);
-    $request->content_type('application/octet-stream');
-
-    my $response;
-    $app->handle_request($request, \$response);
-
-    return $response;
 }
 
 package # Hide from PAUSE
