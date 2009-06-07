@@ -3,7 +3,7 @@ use warnings;
 use Test::More tests => 5;
 
 use FindBin;
-use lib "$FindBin::Bin/../testapp/lib";
+use lib "$FindBin::Bin/lib";
 
 BEGIN {
     use_ok 'Catalyst::Test::MessageDriven', 'StompTestApp' or die;
