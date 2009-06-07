@@ -1,5 +1,4 @@
-package # PAUSE hide
-    Catalyst::Test::MessageDriven;
+package Catalyst::Test::MessageDriven;
 use Class::MOP;
 use Sub::Exporter;
 use HTTP::Request;
