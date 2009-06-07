@@ -1,5 +1,6 @@
 Revision history for Perl extension Catalyst::Engine::Stomp.
 
+0.05  Sun Jun 07 01:38:46 2009
     - Cleanups, tests and documentation additions.
     - Add namespace:autoclean
     - Handle 'no type' messages better, attempt to reply saying so.
