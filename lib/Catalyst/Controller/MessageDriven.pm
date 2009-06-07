@@ -31,6 +31,20 @@ A Catalyst controller base class for use with Catalyst::Engine::Stomp,
 which handles YAML-serialized messages. A top-level "type" key in the
 YAML determines the action dispatched to.
 
+=head1 METHODS
+
+=head2 begin
+
+Deserializes the request into C<< $c->stash->{request} >>
+
+=head2 default
+
+Dispatches to method named by the key C<< $c->stash->{request}->{type} >>
+
+=head2 end
+
+Serializes the response from C<< $c->stash->{response} >>
+
 =cut
 
 __PACKAGE__->config( serializer => 'YAML' );
