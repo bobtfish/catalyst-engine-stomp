@@ -12,6 +12,7 @@ use warnings;
 use Alien::ActiveMQ;
 use Test::More;
 use Exporter qw/import/;
+use FindBin;
 
 our $ACTIVEMQ_VERSION = '5.2.0';
 
@@ -42,7 +43,7 @@ sub start_server {
 
     $SIG{CHLD} = 'IGNORE';
     unless (fork()) {
-	    system("$^X -Ilib -Itestapp/lib testapp/script/stomptestapp_stomp.pl --oneshot");
+	    system("$^X -I$FindBin::Bin/lib $FindBin::Bin/script/stomptestapp_stomp.pl --oneshot");
 	    exit 0;
     }
     print STDERR "server started, waiting for spinup...";
