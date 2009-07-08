@@ -50,7 +50,7 @@ Serializes the response from C<< $c->stash->{response} >>
 =cut
 
 class_type 'Data::Serializer';
-my $serializer_t = subtype 'Data::Serializer';
+my $serializer_t = subtype 'Data::Serializer', where { 1 };
 coerce $serializer_t, from 'Str',
     via { Data::Serializer->new( serializer => $_ ) };
 
