@@ -86,8 +86,9 @@ sub end : Private {
     # Custom error handler - steal errors from catalyst and dump them into
     # the stash, to get them serialized out as the reply.
      if (scalar @{$c->error}) {
-         my $error = join "\n", @{$c->error};
-         $c->stash->{response} = { status => 'ERROR', error => $error };
+        $c->log->error($_) for @{$c->error}; # Log errors in Catalyst
+        my $error = join "\n", @{$c->error};
+        $c->stash->{response} = { status => 'ERROR', error => $error };
         $output = $s->serialize( $c->stash->{response} );
         $c->clear_errors;
         $c->response->status(400);
