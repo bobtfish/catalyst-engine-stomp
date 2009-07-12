@@ -43,7 +43,8 @@ sub start_server {
 
     $SIG{CHLD} = 'IGNORE';
     unless (fork()) {
-	    system("$^X -I$FindBin::Bin/lib $FindBin::Bin/script/stomptestapp_stomp.pl --oneshot");
+        my $libs = join(' ', map { "-I$_" } @INC);
+	    system("$^X $libs $FindBin::Bin/script/stomptestapp_stomp.pl --oneshot");
 	    exit 0;
     }
     print STDERR "server started, waiting for spinup...";
