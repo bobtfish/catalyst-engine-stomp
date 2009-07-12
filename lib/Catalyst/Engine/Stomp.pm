@@ -73,7 +73,7 @@ sub run {
              unless ref $app->config->{'Engine::Stomp'} eq 'HASH';
 
         my @queues = grep { length $_ }
-	             map  { $app->controller($_)->action_namespace } $app->controllers;
+                     map  { $app->controller($_)->action_namespace } $app->controllers;
 
         # connect up
         my %template = %{$app->config->{'Engine::Stomp'}};
