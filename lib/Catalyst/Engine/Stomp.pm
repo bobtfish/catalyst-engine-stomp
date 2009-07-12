@@ -72,19 +72,7 @@ sub run {
         die 'No Engine::Stomp configuration found'
              unless ref $app->config->{'Engine::Stomp'} eq 'HASH';
 
-        # list the path namespaces that will be mapped as queues.
-        #
-        # this is known to use the deprecated
-        # Dispatcher->action_hash() method, but there doesn't appear
-        # to be another way to get the relevant strings out.
-        #
-        # http://github.com/rafl/catalyst-runtime/commit/5de163f4963d9dbb41d7311ca6f17314091b7af3#L2R644
-        #
-        my @queues =
-            uniq
-            grep { length $_ }
-            map  { $_->namespace }
-            values %{$app->dispatcher->action_hash};
+        my @queues = map { $app->controller($_)->action_namespace } $app->controllers;
 
         # connect up
         my %template = %{$app->config->{'Engine::Stomp'}};
