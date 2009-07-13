@@ -1,5 +1,4 @@
-package # PAUSE hide
-    Catalyst::Test::MessageDriven;
+package CatalystX::Test::MessageDriven;
 use Class::MOP;
 use Sub::Exporter;
 use HTTP::Request;
@@ -10,7 +9,7 @@ BEGIN {
 
 =head1 NAME
 
-Catalyst::Test::MessageDriven - test message-driven Catalyst apps
+CatalystX::Test::MessageDriven - test message-driven Catalyst apps
 
 =head1 DESCRIPTION
 
@@ -21,7 +20,7 @@ run with Catalyst::Engine::Stomp.
 
 =head1 SYNOPSIS
 
-  BEGIN { use_ok 'Catalyst::Test::MessageDriven', 'SomeApp' };
+  BEGIN { use_ok 'CatalystX::Test::MessageDriven', 'SomeApp' };
 
   my $req = '... some message text ...';
   my $queue = 'somequeue';
@@ -63,7 +62,7 @@ my $build_exports = sub {
     my $class = $args->{class};
 
     if (!$class) {
-        $request = sub { Catalyst::Exception->throw("Must specify a test app: use Catalyst::Test::MessageDriven 'TestApp'") };
+        $request = sub { Catalyst::Exception->throw("Must specify a test app: use CatalystX::Test::MessageDriven 'TestApp'") };
     }
     else {
         unless (Class::MOP::is_class_loaded($class)) {

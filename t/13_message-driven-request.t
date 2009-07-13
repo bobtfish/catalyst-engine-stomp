@@ -6,7 +6,7 @@ use FindBin;
 use lib "$FindBin::Bin/lib";
 
 BEGIN {
-    use_ok 'Catalyst::Test::MessageDriven', 'StompTestApp' or die;
+    use_ok 'CatalystX::Test::MessageDriven', 'StompTestApp' or die;
 };
 
 # successful request - type is minimum attributes
