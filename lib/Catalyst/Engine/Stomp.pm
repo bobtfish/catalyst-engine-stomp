@@ -7,7 +7,7 @@ use namespace::autoclean;
 
 extends 'Catalyst::Engine::Embeddable';
 
-our $VERSION = '0.05';
+our $VERSION = '0.06';
 
 has connection => (is => 'rw', isa => 'Net::Stomp');
 has conn_desc => (is => 'rw', isa => 'Str');
