@@ -17,6 +17,7 @@ requires 'Data::Serializer' => '0.49';
 requires 'namespace::autoclean' => '0.05';
 
 test_requires 'Alien::ActiveMQ' => '0.00003';
+test_requires 'Catalyst::Plugin::ConfigLoader' => undef;
 
 my @force_build_requires_if_author = qw(
   Test::NoTabs
