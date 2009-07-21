@@ -59,11 +59,17 @@ has serializer => (
     default => 'YAML', coerce => 1,
 );
 
+has type_key => (
+    is => 'rw', required =>1,
+    default => 'type',
+);
+
+
 sub begin : Private {
     my ($self, $c) = @_;
 
     # Deserialize the request message
-        my $message;
+    my $message;
     my $s = $self->serializer;
     eval {
         my $body = $c->request->body;
@@ -121,7 +127,7 @@ sub default : Private {
 
     # Forward the request to the appropriate action, based on the
     # message type.
-    my $action = $c->stash->{request}->{type};
+    my $action = $c->stash->{request}->{ $self->type_key };
     if (defined $action) {
         $c->forward($action, [$c->stash->{request}]);
     }
