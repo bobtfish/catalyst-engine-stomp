@@ -17,6 +17,7 @@ requires 'Data::Serializer' => '0.49';
 requires 'namespace::autoclean' => '0.05';
 
 test_requires 'Alien::ActiveMQ' => '0.00003';
+test_requires 'Catalyst::Plugin::ConfigLoader' => undef;
 
 my @force_build_requires_if_author = qw(
   Test::NoTabs
@@ -57,7 +58,7 @@ sub darwin_check_no_resource_forks {
 
         # TAR on 10.4 wants COPY_EXTENDED_ATTRIBUTES_DISABLE
         # On 10.5 (Leopard) it wants COPYFILE_DISABLE
-        my $attr = $osx_ver eq '10.5' ? 'COPYFILE_DISABLE' : 'COPY_EXTENDED_ATTRIBUTES_DISABLE';
+        my $attr = $osx_ver =~ /^10.5/ ? 'COPYFILE_DISABLE' : 'COPY_EXTENDED_ATTRIBUTES_DISABLE';
 
         makemaker_args(dist => { PREOP => qq{\@if [ "\$\$$attr" != "true" ]; then}.
                                           qq{ echo "You must set the ENV variable $attr to true,"; }.
