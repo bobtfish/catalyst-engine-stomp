@@ -77,7 +77,7 @@ sub run {
 
         # connect up
         my %template = %{$app->config->{'Engine::Stomp'}};
-        my $subscrine_headers = $template{subscribe_headers} || {};
+        my $subscribe_headers = $template{subscribe_headers} || {};
         die("subscribe_headers config for Engine::Stomp must be a hashref!\n")
             if (ref($subscribe_headers) ne 'HASH');
 
