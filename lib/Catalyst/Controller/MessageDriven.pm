@@ -60,7 +60,7 @@ has serializer => (
 );
 
 has type_key => (
-    is => 'rw', required =>1,
+    is => 'ro', required =>1,
     default => 'type',
 );
 
