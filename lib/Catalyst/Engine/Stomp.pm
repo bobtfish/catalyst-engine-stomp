@@ -27,8 +27,11 @@ Catalyst::Engine::Stomp - write message handling apps with Catalyst.
 
   MyApp->config->{Engine::Stomp} =
    {
-     hostname => '127.0.0.1',
-     port     => 61613,
+     hostname         => '127.0.0.1',
+     port             => 61613,
+     subscribe_header => {
+       transformation       => 'jms-to-json',
+     }
    };
   MyApp->run();
 
@@ -197,7 +200,6 @@ sub handle_stomp_message {
     # ack the message off the queue now we've replied / processed
     $self->connection->ack( { frame => $frame } );
 }
-
 =head2 handle_stomp_error
 
 Log any Stomp error frames we receive.
@@ -213,3 +215,11 @@ sub handle_stomp_error {
 
 __PACKAGE__->meta->make_immutable;
 
+=head1 CONFIGURATION
+
+=head2 subscribe_header
+
+Add additional header key/value pairs to the subscribe message sent to the
+message broker.
+
+=cut
