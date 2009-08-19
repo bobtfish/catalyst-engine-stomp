@@ -1,5 +1,13 @@
 use inc::Module::Install 0.91;
+use strict;
+use warnings;
 use 5.008006;
+
+BEGIN {
+    if ($Module::Install::AUTHOR) {
+        require Module::Install::AuthorRequires;
+    }
+}
 
 license  'perl';
 
@@ -19,37 +27,22 @@ requires 'namespace::autoclean' => '0.05';
 test_requires 'Alien::ActiveMQ' => '0.00003';
 test_requires 'Catalyst::Plugin::ConfigLoader' => undef;
 
-my @force_build_requires_if_author = qw(
-  Test::NoTabs
-  Test::Pod
-  Test::Pod::Coverage
-  Pod::Coverage
-);
+author_requires 'Test::NoTabs';
+author_requires 'Test::Pod';
+author_requires 'Test::Pod::Coverage';
+author_requires 'Pod::Coverage';
 
 if ($Module::Install::AUTHOR) {
-    foreach my $module (@force_build_requires_if_author) {
-        build_requires $module;
-    }
     darwin_check_no_resource_forks();
 }
+
+resources
+    'repository' => 'git://github.com/chrisa/catalyst-engine-stomp.git',
+    'license' => 'http://dev.perl.org/licenses/';
 
 install_script glob('script/*.pl');
 auto_install;
 WriteAll;
-
-if ($Module::Install::AUTHOR) {
-
-  # Strip out the author only build_requires from META.yml
-  # Need to do this _after_ WriteAll else it looses track of them
-  strip_author_only_build_requires(@force_build_requires_if_author);
-
-  Meta->{values}{resources} = [
-    [ 'license',    => 'http://dev.perl.org/licenses/' ],
-    [ 'repository', => 'git://github.com/chrisa/catalyst-engine-stomp.git' ],
-  ];
-
-  Meta->write;
-}
 
 sub darwin_check_no_resource_forks {
     if ($^O eq 'darwin') {
@@ -64,19 +57,5 @@ sub darwin_check_no_resource_forks {
                                           qq{ echo "You must set the ENV variable $attr to true,"; }.
                                           ' echo "to avoid getting resource forks in your dist."; exit 255; fi' });
         }
-}
-
-sub strip_author_only_build_requires {
-    my @build_requires_to_strip = @_;
-    Meta->{values}{build_requires} = [ grep {
-      my $ok = 1;
-      foreach my $module (@build_requires_to_strip) {
-        if ($_->[0] =~ /$module/) {
-          $ok = 0;
-          last;
-        }
-      }
-      $ok;
-    } @{Meta->{values}{build_requires}} ];
 }
 
