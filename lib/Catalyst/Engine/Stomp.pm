@@ -3,6 +3,7 @@ use Moose;
 use List::MoreUtils qw/ uniq /;
 use HTTP::Request;
 use Net::Stomp;
+use MooseX::Types::Moose qw/Str Int HashRef/;
 use namespace::autoclean;
 
 extends 'Catalyst::Engine::Embeddable';
@@ -10,7 +11,7 @@ extends 'Catalyst::Engine::Embeddable';
 our $VERSION = '0.06';
 
 has connection => (is => 'rw', isa => 'Net::Stomp');
-has conn_desc => (is => 'rw', isa => 'Str');
+has conn_desc => (is => 'rw', isa => Str);
 
 =head1 NAME
 
@@ -25,14 +26,15 @@ Catalyst::Engine::Stomp - write message handling apps with Catalyst.
     require Catalyst::Engine::Stomp;
   }
 
-  MyApp->config->{Engine::Stomp} =
-   {
-     hostname         => '127.0.0.1',
-     port             => 61613,
-     subscribe_header => {
-       transformation       => 'jms-to-json',
-     }
-   };
+  MyApp->config(
+     'Engine::Stomp' = {
+       hostname         => '127.0.0.1',
+       port             => 61613,
+       subscribe_header => {
+         transformation       => 'jms-to-json',
+       }
+    },
+  );
   MyApp->run();
 
   # In a controller, or controller base class:
