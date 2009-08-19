@@ -1,5 +1,9 @@
 Revision history for Perl extension Catalyst::Engine::Stomp.
 
+    - Ability to add additional header key/value pairs to the
+      subscribe message sent to the message broker. (jason)
+    - Additional documentation (jason)
+
 0.06  Mon Jul 13 22:22:22 2009
     - Make the test-app harness available under CatalystX::
     - Clean up use of deprecated dispatcher methods.

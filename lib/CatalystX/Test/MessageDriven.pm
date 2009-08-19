@@ -103,3 +103,17 @@ sub run {
 
 1;
 
+=head1 AUTHOR AND CONTRIBUTORS
+
+See information in L<Catalyst::Engine::Stomp>
+
+=head1 LICENCE AND COPYRIGHT
+
+Copyright (C) 2009 Venda Ltd
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself, either Perl version 5.8.8 or,
+at your option, any later version of Perl 5 you may have available.
+
+=cut
+

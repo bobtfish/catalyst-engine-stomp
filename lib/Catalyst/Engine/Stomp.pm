@@ -216,3 +216,30 @@ Add additional header key/value pairs to the subscribe message sent to the
 message broker.
 
 =cut
+
+=head1 DEVELOPMENT
+
+The source to Catalyst::Engine::Stomp is in github:
+
+  http://github.com/chrisa/catalyst-engine-stomp
+
+=head1 AUTHOR
+
+Chris Andrews C<< <chris@nodnol.org> >>
+
+=head1 CONTRIBUTORS
+
+Tomas Doran (t0m) C<< <bobtfish@bobtfish.net> >>
+
+Jason Tang
+
+=head1 LICENCE AND COPYRIGHT
+
+Copyright (C) 2009 Venda Ltd
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself, either Perl version 5.8.8 or,
+at your option, any later version of Perl 5 you may have available.
+
+=cut
+
