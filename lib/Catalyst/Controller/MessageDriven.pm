@@ -47,6 +47,25 @@ Dispatches to method named by the key C<< $c->stash->{request}->{type} >>
 
 Serializes the response from C<< $c->stash->{response} >>
 
+=head1 CONFIGURATION
+
+In the configuration file add the following to set the value for a parameter
+
+  <MessageDriven>
+    type_key foo
+  </MessageDriven>
+
+=head2 type_key
+
+The hash key the module will try to pull out the received message to call
+within the controller. This defaults to 'type'.
+
+=head2 serializer
+
+The serializer used to serialiser/deserialise. See Data::Serializer to see
+what is available. Defaults to YAML. JSON is anotther that is available.
+
+
 =cut
 
 class_type 'Data::Serializer';
@@ -60,7 +79,7 @@ has serializer => (
 );
 
 has type_key => (
-    is => 'rw', required =>1,
+    is => 'ro', required =>1,
     default => 'type',
 );
 

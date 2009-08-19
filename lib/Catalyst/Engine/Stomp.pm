@@ -27,8 +27,11 @@ Catalyst::Engine::Stomp - write message handling apps with Catalyst.
 
   MyApp->config->{Engine::Stomp} =
    {
-     hostname => '127.0.0.1',
-     port     => 61613,
+     hostname         => '127.0.0.1',
+     port             => 61613,
+     subscribe_header => {
+       transformation       => 'jms-to-json',
+     }
    };
   MyApp->run();
 
@@ -77,6 +80,10 @@ sub run {
 
         # connect up
         my %template = %{$app->config->{'Engine::Stomp'}};
+        my $add_header = delete $template{subscribe_header};
+        if (ref($add_header) ne 'HASH') {
+            $add_header = undef;
+        }
         $self->connection(Net::Stomp->new(\%template));
         $self->connection->connect();
         $self->conn_desc($template{hostname}.':'.$template{port});
@@ -84,10 +91,20 @@ sub run {
         # subscribe, with client ack.
         foreach my $queue (@queues) {
                 my $queue_name = "/queue/$queue";
-                $self->connection->subscribe({
-                                              destination => $queue_name,
-                                              ack         => 'client'
-                                             });
+                my $header_hash = {
+                    destination => $queue_name,
+                    ack         => 'client',
+                };
+
+                # add the additional headers - yes I know it overwrites but
+                # thats the dev's problem?
+                if (keys %{$add_header}) {
+                    foreach my $key (keys %{$add_header}) {
+                        $header_hash->{$key} = $add_header->{$key};
+                    }
+                }
+
+                $self->connection->subscribe($header_hash);
         }
 
         # enter loop...
@@ -183,7 +200,6 @@ sub handle_stomp_message {
     # ack the message off the queue now we've replied / processed
     $self->connection->ack( { frame => $frame } );
 }
-
 =head2 handle_stomp_error
 
 Log any Stomp error frames we receive.
@@ -199,3 +215,11 @@ sub handle_stomp_error {
 
 __PACKAGE__->meta->make_immutable;
 
+=head1 CONFIGURATION
+
+=head2 subscribe_header
+
+Add additional header key/value pairs to the subscribe message sent to the
+message broker.
+
+=cut
